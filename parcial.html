@@ -1,0 +1,225 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>CALLE 100</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.min.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+    <script>
+		var scene, aspect, camera, renderer, controls;
+		var startTime = Date.now();		
+		var boton1 = false;
+        var boton2 = false;
+        var boton3 = false;
+        var boton4 = false;
+		var geometry;
+        var objeto1, objeto2, objeto3;
+		init();
+		animate();
+	
+		function init(){
+			//INICIALIZACIÓN DE LA ESCENA
+			scene = new THREE.Scene();
+            scene.background = new THREE.Color( 0xAAAAAA );
+			aspect = window.innerWidth / window.innerHeight;
+			camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+            controls = new THREE.OrbitControls( camera, renderer.domElement );
+            
+				  			
+			
+			var onKeyDown = function ( event ) {
+				switch ( event.keyCode ) {
+					case 49: // PROYECCION YZ
+						boton1 = true;
+						break;
+					case 50: //
+						boton2 = true;
+						break;
+                    case 51: // PROYECCION XY
+                        boton3 = true;
+                        break;
+                    case 52: //
+                        boton4 = true;
+                        break;
+				}
+			};	  
+		  			
+			var onKeyUp = function ( event ) {
+				switch ( event.keyCode ) {
+					case 49: // TRASLADAR EN DIRECCION POSITIVA
+						boton1 = false;
+						break;
+					case 50: // TRASLADAR EN DIRECCION NEGATIVA
+						boton2 = false;
+						break;
+                    case 51: // PROYECCION XY
+                        boton3 = false;
+                        break;
+                    case 52: //
+                        boton4 = false;
+                        break;
+				}
+			};	  	
+			
+			document.addEventListener( 'keydown', onKeyDown, false );
+			document.addEventListener( 'keyup', onKeyUp, false );
+			
+			//ELEMENTOS DE ESCENA
+			var size = 50;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA3333 );
+		  	var colorG = new THREE.Color( 0xAAAA33 );
+		  	var colorB = new THREE.Color( 0xAA4666 );
+			var colorRd = new THREE.Color( 0xAA6666 );
+		  	var colorGd = new THREE.Color( 0x66AA66 );
+		  	var colorBd = new THREE.Color( 0x6666AA );
+		  
+		  	var axesHelper = new THREE.AxesHelper( size );
+		  	var gridHelperXY = new THREE.GridHelper( size, divisions, color2, color2);
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		  	var gridHelperYZ = new THREE.GridHelper( size, divisions, color1, color1 );
+            
+            
+            gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+            gridHelperYZ.rotateOnWorldAxis ( z, THREE.Math.degToRad(90) );
+            
+	       var geometry= new THREE.BoxGeometry(13,2,2);
+		   var geometry2= new THREE.BoxGeometry(3,2,3);
+		   var geometry3= new THREE.BoxGeometry(5,2,5);
+		   var geometry4= new THREE.BoxGeometry(15,4,2);
+		   var geometry5= new THREE.BoxGeometry(1,2,2);
+		   var geometry6= new THREE.BoxGeometry(3,4,3);
+		   var geometry7= new THREE.BoxGeometry(15,1,0.5);
+		   var geometry8= new THREE.BoxGeometry(5,3,2);
+			var geometry9= new THREE.BoxGeometry(1,1.5,1);
+			var geometry10= new THREE.BoxGeometry(3.5,1,3.5);
+          	var geometrya= new THREE.SphereGeometry(1.5,5,5);
+          	
+			
+            var material = new THREE.MeshBasicMaterial( { color: colorRd, side:THREE.DoubleSide } );
+			var material1 = new THREE.MeshBasicMaterial( { color: colorB, side:THREE.DoubleSide } );
+			var material2 = new THREE.MeshBasicMaterial( { color: color1, side:THREE.DoubleSide } );
+			
+			sol= new THREE.Mesh(geometrya,material2);
+			bloquebc  = new THREE.Mesh( geometry, material1 ); 
+			pasillob= new THREE.Mesh( geometry2, material );
+			auditorio= new THREE.Mesh( geometry3, material );
+			bloquee= new THREE.Mesh(geometry4,material1);
+			bloqued= new THREE.Mesh(geometry5,material1);
+			bloquea= new THREE.Mesh(geometry6,material);
+			pasillo= new THREE.Mesh(geometry7,material1);
+			lab= new THREE.Mesh(geometry8,material);
+			columna=new THREE.Mesh(geometry9,material);
+			porteria= new THREE.Mesh(geometry10,material1);
+			
+			
+			pasilloc=pasillob.clone();
+			pasillod=pasillob.clone();
+			columna2=columna.clone();
+			columna3=columna.clone();
+			columna4=columna.clone();
+			
+			
+			
+            bloquebc.applyMatrix( new THREE.Matrix4().makeTranslation(0,1,0.5) );
+			pasillo.applyMatrix( new THREE.Matrix4().makeTranslation(1,0,-1) );
+			pasillob.applyMatrix(new THREE.Matrix4().makeTranslation(5,1,-2));
+			pasilloc.applyMatrix(new THREE.Matrix4().makeTranslation(-1,1,-2));
+			pasillod.applyMatrix(new THREE.Matrix4().makeTranslation(-7,1,-2));
+            auditorio.applyMatrix( new THREE.Matrix4().makeTranslation(-6,1,7) );
+			bloquee.applyMatrix( new THREE.Matrix4().makeTranslation(-1,2,-4.5) );
+			bloquea.applyMatrix( new THREE.Matrix4().makeTranslation(10,1,-1) );
+			bloqued.applyMatrix( new THREE.Matrix4().makeTranslation(-8,1,0.5) );
+			lab.applyMatrix( new THREE.Matrix4().makeTranslation(4.5,2,-8) );
+			sol.applyMatrix( new THREE.Matrix4().makeTranslation(-7,8,0) );
+			columna.applyMatrix( new THREE.Matrix4().makeTranslation(3,1,9) );
+			columna2.applyMatrix( new THREE.Matrix4().makeTranslation(3,1,7) );
+			columna3.applyMatrix( new THREE.Matrix4().makeTranslation(5,1,9) );
+		    columna4.applyMatrix( new THREE.Matrix4().makeTranslation(5,1,7) );
+			porteria.applyMatrix( new THREE.Matrix4().makeTranslation(4,2,8.5) );
+			
+			
+		  	
+            scene.add( gridHelperXZ );
+		 	
+			scene.add( bloquebc );
+			scene.add( pasillob );
+			scene.add( pasilloc );
+			scene.add( pasillod );
+			scene.add(auditorio);
+			scene.add(bloquee);
+			scene.add(bloqued);
+			scene.add(bloquea);
+			scene.add(pasillo);
+			scene.add(lab);
+			scene.add(columna);
+			scene.add(columna2);
+			scene.add(columna3);
+         	scene.add(columna4);
+			scene.add(porteria);
+			scene.add(sol);
+			camera.position.x = 5;
+			camera.position.y = 5;	 
+		  	camera.position.z = 30;			
+		  	camera.lookAt( origin );
+			
+			}
+    
+    function animate() {
+        requestAnimationFrame( animate );
+        controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+        render();
+    }
+    
+    function render(){
+        var dtime = Date.now()-startTime;
+		var p = 1, q = 1;
+		if(boton1) {
+			//MATRIZ DE TRASLACIÓN
+			var t = new THREE.Matrix4();		//Crear la matriz de traslación
+			var v = new THREE.Vector3();
+			v = geometry.vertices[0];
+			geometry.vertices[0] = new THREE.Vector3(v.x/v.z, v.y/v.z, v.z/v.z);
+			console.log( v.x + " " + v.y + " " + v.z );
+			v = geometry.vertices[1];
+			geometry.vertices[1] = new THREE.Vector3(v.x/v.z, v.y/v.z, v.z/v.z);
+			console.log( v.x + " " + v.y + " " + v.z );
+			v = geometry.vertices[2];
+			geometry.vertices[2] = new THREE.Vector3(v.x/v.z, v.y/v.z, v.z/v.z);
+			console.log( v.x + " " + v.y + " " + v.z );
+			/*t.set(  1, 0, 0, v.x/-v.z,
+					0, 1, 0, v.y/-v.z,
+					0, 0, 1, -v.z,
+					0, 0, 0, 1	);
+			objeto1.applyMatrix(t);			    //Aplicar la matriz de proyección al objeto1
+			objeto1.updateMatrix();*/
+			geometry.verticesNeedUpdate = true;
+			geometry.elementsNeedUpdate = true;
+			boton1 = false;
+		}
+		requestAnimationFrame(render);
+  sol.rotation.x += 0.001;
+  sol.rotation.y += 0.001;
+  
+
+        camera.lookAt( 0, 0, 0 ); 
+        renderer.render( scene, camera );
+    }
+    </script>
+  </body>
+</html>

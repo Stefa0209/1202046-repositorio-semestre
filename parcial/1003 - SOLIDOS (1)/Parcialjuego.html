@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>parcial</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+   <div id= "my-div"> 
+   
+   <button id='an' type= "button" style="left:90% ; top:15%" onclick= "animateClick()"> ANIMAR </button>
+   <div> 
+   <button id='cab' type= "button" style="left:90% ; top:25%" onclick= "CabClick()"> ARCO </button>
+   <div> 
+   <button id='cub' type= "button" style="left:90% ; top:35%" onclick= "CuboClick()"> CUBO </button>
+   <div>
+   <button id='tr' type="button" style="left:90% ; top:45%" onclick= "trianguloClick()">TRIANGULO </button>
+   <div>
+   <button id='cr' type="button" style="left:90% ; top:55%" onclick= "cruzClick()"> CRUZ </button>
+   <div>
+   <button id='oval' type= "button" style="left:90% ; top:65%" onclick= "ovaloClick()">OVALO </button>
+   <div> 
+   <button id='red' type="button" style="left:90% ; top:75%" onclick= "RojoClick()"> ROJO </button>
+   <div>
+   <button id='yel' type= "button" style="left:90% ; top:85%" onclick= "AmarilloClick()"> AMARILLO </button>
+   <div>
+    <button id='blu' type="button" style="left:90% ; top:90%" onclick= "AzulClick()"> AZUL </button>
+ 
+    
+    </div>
+     </div>
+    </div>
+    </div>
+    </div>
+   </div>
+   </div>
+    </div>
+   </div>
+    <script src="js/three.js"></script>
+	<script src="js/controls/OrbitControls.js"></script>
+	<script src="js/csg.js"></script>
+	<script src="js/THREE.CSG.js"></script>
+    <script>
+		var scene, aspect, camera, renderer;
+		var pi= 3.141592654;
+		
+	    var camera, scene, renderer;
+var plane;
+var mouse, rcs, isShiftDown = false;
+
+var refMesh, refMaterial;
+var cuboG, CMaterial;
+
+
+var container;
+init();
+luz();
+animate();
+triangulo();
+cruz();
+Rojo();
+Amarillo();
+Azul();
+render();
+
+function init() {
+    
+
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+    camera.position.set(50, 80, 130);
+    camera.lookAt(0, 0, 0);
+    
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xFFFFFF);
+    
+    
+    // cubito guia posicion 
+
+    var ref = new THREE.BoxBufferGeometry(50, 50, 50);
+    refMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff, opacity: 0.6, transparent: true });
+    refMesh = new THREE.Mesh(ref, refMaterial);
+    scene.add(refMesh);
+
+    // cubos
+
+    cuboG = new THREE.BoxBufferGeometry(50, 50, 50);
+    CMaterial = new THREE.MeshLambertMaterial({ color: 0xfeb74c, map: new THREE.TextureLoader().load('textures/square-outline-textured.png') });
+
+
+
+    var gridHelper = new THREE.GridHelper(1000, 20);
+    scene.add(gridHelper);
+
+    var ambientLight = new THREE.AmbientLight(0x00AA00);
+    scene.add(ambientLight);
+
+    var directionalLight = new THREE.DirectionalLight(0xffffff);
+    directionalLight.position.set(1, 0.75, 0.5).normalize();
+    scene.add(directionalLight);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    //  estructura de lister('nombreaccionNavegaoes', nombreFuncioEjectura, false)
+  //  document.addEventListener('mousemove', onDocumentMouseMove, false);
+    
+    document.addEventListener('mousemove', onDocumentMouseMove, false);
+    document.addEventListener('mousedown', onDocumentMouseDown, false);
+    document.addEventListener('keyup', onDocumentKeyUp, false);
+    
+    
+    window.addEventListener('resize',dimensionespantalla, false);
+    document.getElementById('an').addEventListener('click', animate);
+    document.getElementById('red').addEvenListener('click',Rojo);
+    document.getElementById('yel').addEvenListener('click',Amarillo);
+    document.getElementById('blu').addEvenListener('click',Azul);
+    document.getElementById('cub').addEvenListener('click',Cubo);
+    document.getElementById('cab').addEvenListener('click',Cab);
+    document.getElementById('tr').addEvenListener('click',triangulo);
+    document.getElementById('cr').addEvenListener('click',cruz);
+    document.getElementById('oval').addEvenListener('click',ovalo);
+
+    //
+
+
+}
+
+function dimensionespantalla() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+}
+
+function onDocumentMouseMove(event) {
+
+    event.preventDefault();
+
+    mouse.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
+
+    rcs.setFromCamera(mouse, camera);
+
+    var inter = rcs.intersectObjects(objects);
+
+    if (intersects.length > 0) {
+
+        var inter= inter[0];
+
+        refMesh.position.copy(inter.point).add(inter.face.normal);
+        refMesh.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+
+    }
+
+    render();
+
+}
+
+function onDocumentMouseDown(event) {
+    
+ if(run){
+    event.preventDefault();
+
+    mouse.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
+
+    rcs.setFromCamera(mouse, camera);
+
+    var inter = rcs.intersectObjects(objects);
+
+    if (inter.length > 0) {
+
+        var intersect = inter[0];
+
+        // delete cube
+
+        if (isShiftDown) {
+
+            if (inter.object !== plane) {
+
+                scene.remove(inter.object);
+
+                objects.splice(objects.indexOf(inter.object), 1);
+
+            }
+
+            // create cube
+
+        } else {
+
+            var objectoToAdd = devolverObjeto();
+            objectoToAdd.position.copy(inter.point).add(inter.face.normal);
+            objectoToAdd.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+            scene.add(objectoToAdd);
+
+            objects.push(objectoToAdd);
+
+            // modificar para cambiar elemento 
+
+        }
+
+        render();
+
+    }
+ }else{
+     if(confirm("inicia")){
+         run=true;  
+     } 
+ }
+}
+
+
+
+
+function onDocumentKeyUp(event) {
+
+    var s = document.getElementById("figura"); 
+    s.innerHTML = nombreObjeto + " " + indexTipoObjeto  ; 
+    switch (event.keyCode) {
+
+        case 16: isShiftDown = false; break;
+
+    }
+
+}
+
+function render() {
+
+    renderer.render(scene, camera);
+
+}
+
+function luz() {
+    var ambient = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(ambient);
+
+    var p = new THREE.PointLight(0xffffff, .2, 100);
+    p.position.set(10, 10, -10);
+    scene.add(p);
+}
+
+function animate(){
+    var time = -performance.now()*0.0006;
+    
+    camera.position.x=800*Math.cos(time);
+    camera.position.z=800*Math.sin(time);
+    requestAnimationFrame(animate);
+    render();
+    stats.update();
+}
+
+
+   // </script>
+  </body>
+</html>
